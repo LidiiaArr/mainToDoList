@@ -9,15 +9,31 @@ import {
     todolistReducer
 } from "./todolist-reducer";
 
-test("correct todolist should be removed", ()=>{
-    //тестовые данные
-    let todolistId1 = v1();
-    let todolistId2 = v1();
+let todolistId1: string;
+let todolistId2: string;
+//При запуске файла сначала создаются переменные
+let startState: Array<TodoListType>
 
-    const startState: Array<TodoListType> = [
+beforeEach(() => {
+    todolistId1 = v1();
+    todolistId2 = v1();
+
+    startState = [
         {id: todolistId1, title: 'What to learn', filter: 'all'},
         {id: todolistId2, title: 'What to buy', filter: 'all'},
     ]
+})
+//beforeEach срабатывает перед каждым тестом и происходит инициализация переменных с undefined
+//чтобы не создавать в каждом тесте переменные и не дублировать код
+test("correct todolist should be removed", ()=>{
+    //тестовые данные
+    // let todolistId1 = v1();
+    // let todolistId2 = v1();
+    //
+    // const startState: Array<TodoListType> = [
+    //     {id: todolistId1, title: 'What to learn', filter: 'all'},
+    //     {id: todolistId2, title: 'What to buy', filter: 'all'},
+    // ]
     //вызов тестируемой функции
     const endState = todolistReducer(startState, RemoveTodoListAC(todolistId2))
 
@@ -27,17 +43,16 @@ test("correct todolist should be removed", ()=>{
 })
 
 test("correct todolists should be added", ()=>{
-    let todolistId1 = v1();
-    let todolistId2 = v1();
+    // let todolistId1 = v1();
+    // let todolistId2 = v1();
 
     let newTodolistTitle = 'New Todolist'
 
-    const startState: Array<TodoListType> = [
-        {id: todolistId1, title: 'What to learn', filter: 'all'},
-        {id: todolistId2, title: 'What to buy', filter: 'all'},
-    ]
+    // const startState: Array<TodoListType> = [
+    //     {id: todolistId1, title: 'What to learn', filter: 'all'},
+    //     {id: todolistId2, title: 'What to buy', filter: 'all'},
+    // ]
 
-    //const endState = todolistReducer(startState, {type:"ADD-TODOLIST", title:newTodolistTitle})
     const endState = todolistReducer(startState, AddTodoListAC(newTodolistTitle))
 
     expect(endState.length).toBe(3)
@@ -45,15 +60,16 @@ test("correct todolists should be added", ()=>{
 })
 
 test("correct filter of todolist should be changed", () =>{
-    let todolistId1 = v1();
-    let todolistId2 = v1();
+    // let todolistId1 = v1();
+    // let todolistId2 = v1();
 
     let newFilter:FilterValueType =  "completed"
 
-    const startState: Array<TodoListType> = [
-        {id: todolistId1, title: 'What to learn', filter: 'all'},
-        {id: todolistId2, title: 'What to buy', filter: 'all'},
-    ]
+    // const startState: Array<TodoListType> = [
+    //     {id: todolistId1, title: 'What to learn', filter: 'all'},
+    //     {id: todolistId2, title: 'What to buy', filter: 'all'},
+    // ]
+
     const action:  ChangeTodoListFilterAT = ChangeTodoListFilterAC(todolistId2, newFilter)
     const endS = todolistReducer(startState, action)
 
@@ -62,21 +78,17 @@ test("correct filter of todolist should be changed", () =>{
 });
 
 test("correct tdl should change its name", () => {
-    let todolistId1 = v1();
-    let todolistId2 = v1();
+    // let todolistId1 = v1();
+    // let todolistId2 = v1();
 
     let newTodolistTitle = "New Todolist";
 
-    const startState: Array<TodoListType> = [
-        {id: todolistId1, title: 'What to learn', filter: 'all'},
-        {id: todolistId2, title: 'What to buy', filter: 'all'},
-    ]
+    // const startState: Array<TodoListType> = [
+    //     {id: todolistId1, title: 'What to learn', filter: 'all'},
+    //     {id: todolistId2, title: 'What to buy', filter: 'all'},
+    // ]
 
-    // const action:ChangeTodoListTitleAT = {
-    //     type:"CHANGE-TODOLIST-TITLE",
-    //     id:todolistId2,
-    //     title: newTodolistTitle,
-    // }
+
     const endState = todolistReducer(startState, ChangeTodoListTitleAC(todolistId2,newTodolistTitle))
 
     expect(endState[0].title).toBe("What to learn")
@@ -131,8 +143,5 @@ test("test userReducer", ()=>{
     })
 
     expect(endState[0].password).toBe("123")
-
-
-
 
 })
