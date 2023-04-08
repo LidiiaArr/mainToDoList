@@ -40,3 +40,4 @@ test("get Square Only Of Positive Integers", () => {
     expect(result[1]).toBe(100)
     expect(result[2]).toBe(36)
 })
+

@@ -22,9 +22,16 @@ export type ChangeTodoListTitleAT = {
     title:string
 }
 
+let initialState : Array<TodoListType> = [
+
+]
+//Ещё одно: с первым системным экшеном, который редакс диспатчит\отправляет в наши редьюсеры стейт не приходит.
+// Он равен undefined, его нет, потому что жизнь только зарождается:
+//Поэтому для параметра state мы должны задать значение по дефолту, равное начальному состоянию.
+
 export type ActionType = RemoveTodoListAT | AddTodoListAT | ChangeTodoListFilterAT | ChangeTodoListTitleAT
 
-export const todolistReducer = (todolists: Array<TodoListType>, action:ActionType): Array<TodoListType> => {
+export const todolistsReducer = (todolists= initialState, action:ActionType): Array<TodoListType> => {
     switch (action.type) {
         case "REMOVE-TODOLIST":
             return todolists.filter(tl => tl.id !== action.id)

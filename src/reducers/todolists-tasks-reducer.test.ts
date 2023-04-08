@@ -1,7 +1,7 @@
 import React from "react";
 import {TasksStateType, TodoListType} from "../App";
 import {tasksReducer} from "./tasks-reducer";
-import {AddTodoListAC, RemoveTodoListAC, todolistReducer} from "./todolist-reducer";
+import {AddTodoListAC, RemoveTodoListAC, todolistsReducer} from "./todolists-reducer";
 
 test('ids should be equals', () => {
     const startTasksState: TasksStateType = {}
@@ -15,7 +15,7 @@ test('ids should be equals', () => {
     const endTasksState = tasksReducer(startTasksState, action)
     //сохраняем новый стейт с тасками после изменения в редьюсере
 
-    const endTodolistsState = todolistReducer(startTodolistsState, action)
+    const endTodolistsState = todolistsReducer(startTodolistsState, action)
     //сохраняем новый стейт с тудулистами после изменения в редьюсере
 
 

@@ -13,6 +13,9 @@ import {
     todolistsReducer
 } from "./reducers/todolists-reducer";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, tasksReducer} from "./reducers/tasks-reducer";
+import {useDispatch, useSelector} from "react-redux";
+import {AppRootStateType} from "./store/store";
+import ToDoList1 from "./ToDoList1";
 
 export type FilterValueType = "all" | "active" | "completed"
 
@@ -22,12 +25,12 @@ export type TodoListType = {
     filter: FilterValueType
 }
 
-// export type TasksStateType = {
-//     [todoListID: string]: Array<TaskType> //типизируем вычисляемое свойство объекта [тутМожетБытьЧтоУгодно: string]: TaskType[]
-// }
+export type TasksStateType = {
+    [todoListID: string]: Array<TaskType> //типизируем вычисляемое свойство объекта [тутМожетБытьЧтоУгодно: string]: TaskType[]
+}
 
 
-function AppWithReducer() {
+function AppWithRedux() {
 
     const todoListID_1 = v1() //вызываем функцию v1()  для создания Id, библиотека uuid
     //библиотека генерирует строку из цифр(0-9) и букв(a-f)
@@ -37,27 +40,36 @@ function AppWithReducer() {
 
     const todoListID_2 = v1()
 
-    const [todoLists, dispatchToTodoLists] = useReducer(todolistsReducer,[
-        {id: todoListID_1, title: 'What to learn', filter: 'all'},
-        {id: todoListID_2, title: 'What to buy', filter: 'all'},
-    ])
-    const [tasks, dispatchToTasks] = useReducer(tasksReducer,{
-        [todoListID_1]: [
-            {id: v1(), title: "HTML&CSS", isDone: true},
-            {id: v1(), title: "JS/TS", isDone: true},
-            {id: v1(), title: "React", isDone: false},
-            {id: v1(), title: "Storybook", isDone: false},
-            {id: v1(), title: "MI", isDone: false}],
-        [todoListID_2]: [
-            //Важно свойство [todoListID_2] в квадратных скобках так как иначе todoListID_2 будет восприниматься как строка, а не как переменная
-            //[вычисляемое свойство объекта]- специфический синтаксис, это выполняемый код, а не строка
-            {id: v1(), title: "Ice cream", isDone: true},
-            {id: v1(), title: "Chocolate", isDone: true},
-            {id: v1(), title: "Cake", isDone: false},
-            {id: v1(), title: "Pizza", isDone: false},
-            {id: v1(), title: "Nutella", isDone: false}
-        ]
-    })
+    let todoLists = useSelector<AppRootStateType, Array<TodoListType>>(state => state.todolists)
+//типизируется дженериком тип стейта с которым работаем вторым возвращаемое значение useSelector
+//принимает колбек который принимает state и возвращает часть стейта
+
+    // let tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
+
+    let dispatch = useDispatch()
+//получение функции store.dispatch в компоненте
+
+    // const [todoLists, dispatchToTodoLists] = useReducer(todolistsReducer,[
+    //     {id: todoListID_1, title: 'What to learn', filter: 'all'},
+    //     {id: todoListID_2, title: 'What to buy', filter: 'all'},
+    // ])
+    // const [tasks, dispatchToTasks] = useReducer(tasksReducer,{
+    //     [todoListID_1]: [
+    //         {id: v1(), title: "HTML&CSS", isDone: true},
+    //         {id: v1(), title: "JS/TS", isDone: true},
+    //         {id: v1(), title: "React", isDone: false},
+    //         {id: v1(), title: "Storybook", isDone: false},
+    //         {id: v1(), title: "MI", isDone: false}],
+    //     [todoListID_2]: [
+    //         //Важно свойство [todoListID_2] в квадратных скобках так как иначе todoListID_2 будет восприниматься как строка, а не как переменная
+    //         //[вычисляемое свойство объекта]- специфический синтаксис, это выполняемый код, а не строка
+    //         {id: v1(), title: "Ice cream", isDone: true},
+    //         {id: v1(), title: "Chocolate", isDone: true},
+    //         {id: v1(), title: "Cake", isDone: false},
+    //         {id: v1(), title: "Pizza", isDone: false},
+    //         {id: v1(), title: "Nutella", isDone: false}
+    //     ]
+    // })
 
 
     const removeTask = (tasksID: string, todoListID: string) => {
@@ -68,7 +80,7 @@ function AppWithReducer() {
         // //проходит через наш фильтр.Фильтруем так чтобы задержать таску с этой tasksID
         // //Мы будем брать по очереди все таски t отдельная таска и будем проверять  t.id проходит если через наш фильтр если только у нее другая id
         let action = removeTaskAC(tasksID,todoListID)
-        dispatchToTasks(action)
+        dispatch(action)
     }
     const addTask = (title: string, todoListID: string) => {
         // const newTask: TaskType = {
@@ -82,13 +94,13 @@ function AppWithReducer() {
         // //Копию вместе с изменениями сетаем в стейт в качестве новой версии стейта
         // //Реакт видит новую структуру данных,в нашем случае новый массив и вызывывает метод рендер и новые данные видит пользователь в интерфейсе.
         let action = addTaskAC(title, todoListID)
-        dispatchToTasks(action)
+        dispatch(action)
 
     }
     const changeTodoListFilter = (newFilterValue: FilterValueType, todoListID: string) => {
         // setTodoLists(todoLists.map(tl => tl.id === todoListID ? {...tl, filter: newFilterValue} : tl))
         let action = ChangeTodoListFilterAC(todoListID, newFilterValue)
-        dispatchToTodoLists(action)
+        dispatch(action)
     }
     const changeTaskStatus = (taskID: string, isDone: boolean, todoListID: string) => {
         // const currentTodoListTasks: Array<TaskType> = tasks[todoListID]
@@ -99,7 +111,7 @@ function AppWithReducer() {
         // tasks[todoListID] = updatedTasks
         // setTasks({...tasks})
         let action = changeTaskStatusAC(taskID, isDone, todoListID)
-        dispatchToTasks(action)
+        dispatch(action)
     }
 
     const changeTaskTitle = (tasksId: string, title: string, todoListID: string) => {
@@ -113,7 +125,7 @@ function AppWithReducer() {
         //     }
         // )
         let action = changeTaskTitleAC(tasksId, title, todoListID)
-        dispatchToTasks(action)
+        dispatch(action)
     }
 
     const changeTodoListTitle = (title: string, todoListID: string) => {
@@ -122,13 +134,12 @@ function AppWithReducer() {
         //     title: title
         // } : tl))
         let action = ChangeTodoListTitleAC(todoListID, title)
-        dispatchToTodoLists(action)
+        dispatch(action)
     }
     const removeToDoList = (todoListID: string) => {
         // setTodoLists(todoLists.filter(tl => tl.id !== todoListID))
         let action = RemoveTodoListAC(todoListID)
-        dispatchToTodoLists(action)
-        dispatchToTasks(action)
+        dispatch(action)
     }
     const addTodoList = (titleNew: string) => { //добавляем новый тудулист
         // const newTodoListID = v1() //Создаем уникальный id для тудулиста c помощью библиотеки uuid вызывая функцию v1()
@@ -145,21 +156,20 @@ function AppWithReducer() {
         // //Важно свойство [newTodoListID] в квадратных скобках так как иначе newTodoListID будет восприниматься как строка а не как переменная
         // //[вычисляемое свойство объекта]- специфический синтаксис это выполняемый код, а не строка
         let action = AddTodoListAC(titleNew)
-        dispatchToTodoLists(action)
-        dispatchToTasks(action)
+        dispatch(action)
 
     }
-    const getTasksForRender = (todoList: TodoListType) => {
-        let tasksForRender = tasks[todoList.id]
-        if (todoList.filter === "active") {
-            tasksForRender = tasks[todoList.id].filter(t => !t.isDone)
-        }
-        if (todoList.filter === "completed") {
-            tasksForRender = tasks[todoList.id].filter(t => t.isDone)
-        }
-        return tasksForRender
-    }
-//Функция отдает таски в зависимости от фильтра
+//     const getTasksForRender = (todoList: TodoListType) => {
+//         let tasksForRender = tasks[todoList.id]
+//         if (todoList.filter === "active") {
+//             tasksForRender = tasks[todoList.id].filter(t => !t.isDone)
+//         }
+//         if (todoList.filter === "completed") {
+//             tasksForRender = tasks[todoList.id].filter(t => t.isDone)
+//         }
+//         return tasksForRender
+//     }
+// //Функция отдает таски в зависимости от фильтра
 
     const  todoListsComponents = todoLists.length
         ? todoLists.map(tl => {
@@ -171,19 +181,21 @@ function AppWithReducer() {
                         elevation={8}
                         style={{padding: "20px"}}
                         square>
-                        <ToDoList
-                            todoListID={tl.id}
-                            tasks={getTasksForRender(tl)}
-                            filter={tl.filter}
-                            title={tl.title}
-
-                            addTask={addTask}
-                            removeTask={removeTask}
-                            removeToDoList={removeToDoList}
-                            changeTodoListFilter={changeTodoListFilter}
-                            changeTaskStatus={changeTaskStatus}
-                            changeTaskTitle={changeTaskTitle}
-                            changeTodoListTitle={changeTodoListTitle}
+                        <ToDoList1
+                            key={tl.id}
+                            todolist={tl}
+                            // todoListID={tl.id}
+                            // tasks={getTasksForRender(tl)}
+                            // filter={tl.filter}
+                            // title={tl.title}
+                            //
+                            // addTask={addTask}
+                            // removeTask={removeTask}
+                            // removeToDoList={removeToDoList}
+                            // changeTodoListFilter={changeTodoListFilter}
+                            // changeTaskStatus={changeTaskStatus}
+                            // changeTaskTitle={changeTaskTitle}
+                            // changeTodoListTitle={changeTodoListTitle}
                         />
                     </Paper>
                 </Grid>
@@ -217,4 +229,4 @@ function AppWithReducer() {
     );
 }
 
-export default AppWithReducer;
+export default AppWithRedux;

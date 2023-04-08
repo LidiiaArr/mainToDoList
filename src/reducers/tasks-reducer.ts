@@ -1,6 +1,6 @@
 import {FilterValueType, TasksStateType, TodoListType} from "../App";
 import {v1} from "uuid";
-import {AddTodoListAT, RemoveTodoListAT} from "./todolist-reducer";
+import {AddTodoListAT, RemoveTodoListAT} from "./todolists-reducer";
 
 
 // type RemoveTaskActionType = {
@@ -17,7 +17,10 @@ type ChangeTaskStatusActionType= ReturnType<typeof changeTaskStatusAC>
 
 type ChangeTaskTitleActionType= ReturnType<typeof changeTaskTitleAC>
 
-
+let initialState : TasksStateType= {}
+//Ещё одно: с первым системным экшеном, который редакс диспатчит\отправляет в наши редьюсеры стейт не приходит.
+// Он равен undefined, его нет, потому что жизнь только зарождается:
+//Поэтому для параметра state мы должны задать значение по дефолту, равное начальному состоянию.
 
 export type ActionType = RemoveTaskActionType
     | AddTaskActionType
@@ -26,7 +29,7 @@ export type ActionType = RemoveTaskActionType
     | AddTodoListAT
     | RemoveTodoListAT
 
-export const tasksReducer = (state: TasksStateType, action:ActionType): TasksStateType => {
+export const tasksReducer = (state= initialState, action:ActionType): TasksStateType => {
     switch (action.type) {
         case "REMOVE-TASK":
             return {
@@ -62,7 +65,8 @@ export const tasksReducer = (state: TasksStateType, action:ActionType): TasksSta
             //return rest
             }
         default:
-            throw new Error("I don't understand this type")
+            return state
+            // Самое главное - если switch не нашёл совпадения, то он должен вернуть state без изменения
     }
 }
 

@@ -1,7 +1,7 @@
 import React from "react";
 import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, tasksReducer} from './tasks-reducer'
 import { TasksStateType } from '../App'
-import {AddTodoListAC, RemoveTodoListAC} from "./todolist-reducer";
+import {AddTodoListAC, RemoveTodoListAC} from "./todolists-reducer";
 
 let startState: TasksStateType
 beforeEach(()=>{
